@@ -52,3 +52,11 @@ class ReprogramarCitaForm(forms.ModelForm):
         if fecha < timezone.now().date():
             raise forms.ValidationError("La fecha no puede ser en el pasado.")
         return fecha
+
+class CitaNotaForm(forms.ModelForm):
+    class Meta:
+        model = Cita
+        fields = ['notas']
+        widgets = {
+            'notas': forms.Textarea(attrs={'rows': 2, 'cols': 40}),
+        }

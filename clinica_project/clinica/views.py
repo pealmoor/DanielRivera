@@ -11,6 +11,7 @@ from datetime import date
 from .forms import CitaFisioterapeutaForm
 from .forms import EncuestaSatisfaccionForm
 from .forms import ReprogramarCitaForm
+from .forms import CitaNotaForm
 
 
 @login_required
@@ -191,8 +192,20 @@ def reprogramar_cita(request, cita_id):
 
 def historial_paciente(request, paciente_id):
     paciente = get_object_or_404(Paciente, id=paciente_id)
-    citas = Cita.objects.filter(paciente=paciente).order_by('-fecha')
+    citas = Cita.objects.filter(paciente=paciente)
+
+    if request.method == "POST":
+        cita_id = request.POST.get("cita_id")
+        cita = get_object_or_404(Cita, id=cita_id)
+        form = CitaNotaForm(request.POST, instance=cita)
+        if form.is_valid():
+            form.save()
+            return redirect('historial_paciente', paciente_id=paciente.id)
+    else:
+        forms_por_cita = {cita.id: CitaNotaForm(instance=cita) for cita in citas}
+
     return render(request, 'clinica/historial_paciente.html', {
         'paciente': paciente,
-        'citas': citas
+        'citas': citas,
+        'forms_por_cita': forms_por_cita
     })
