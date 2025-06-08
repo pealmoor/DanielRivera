@@ -1,0 +1,25 @@
+<h2>Historial de {{ paciente.nombre }}</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Fecha</th>
+      <th>Estado</th>
+      <th>Notas</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for cita in citas %}
+      <tr>
+        <td>{{ cita.fecha }}</td>
+        <td>{{ cita.estado }}</td>
+        <td>{{ cita.notas }}</td>
+      </tr>
+    {% empty %}
+      <tr>
+        <td colspan="3">Este paciente no tiene citas previas.</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+

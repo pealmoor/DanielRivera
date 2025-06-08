@@ -188,3 +188,11 @@ def reprogramar_cita(request, cita_id):
         form = ReprogramarCitaForm(instance=cita)
 
     return render(request, 'clinica/reprogramar_cita.html', {'form': form, 'cita': cita})
+
+def historial_paciente(request, paciente_id):
+    paciente = get_object_or_404(Paciente, id=paciente_id)
+    citas = Cita.objects.filter(paciente=paciente).order_by('-fecha')
+    return render(request, 'clinica/historial_paciente.html', {
+        'paciente': paciente,
+        'citas': citas
+    })
