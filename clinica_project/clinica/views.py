@@ -2,13 +2,15 @@ from django.shortcuts import render, redirect
 from .forms import CitaForm
 from .models import Cita, Paciente, Fisioterapeuta
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import  get_object_or_404
 from django.http import HttpResponse
+from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.core.mail import send_mail
-from django.contrib.auth.decorators import login_required
 from datetime import date
 from .forms import CitaFisioterapeutaForm
+from .forms import EncuestaSatisfaccionForm
+from .forms import ReprogramarCitaForm
 
 
 @login_required
@@ -128,3 +130,61 @@ def historial_paciente(request, paciente_id):
         'paciente': paciente,
         'citas': citas_pasadas,
     })
+
+@login_required
+def encuesta_cita(request, cita_id):
+    cita = get_object_or_404(Cita, id=cita_id, paciente__usuario=request.user)
+
+    # Verificar si la encuesta ya fue respondida
+    if hasattr(cita, 'encuestasatisfaccion'):
+        return HttpResponse("Ya has completado la encuesta para esta cita. ¡Gracias!")
+
+    if request.method == 'POST':
+        form = EncuestaSatisfaccionForm(request.POST)
+        if form.is_valid():
+            encuesta = form.save(commit=False)
+            encuesta.cita = cita
+            encuesta.save()
+            return HttpResponse("Gracias por completar la encuesta.")
+    else:
+        form = EncuestaSatisfaccionForm()
+
+    return render(request, 'clinica/encuesta_cita.html', {'form': form, 'cita': cita})
+
+def confirmar_cita(request, cita_id):
+    cita = get_object_or_404(Cita, id=cita_id, paciente__usuario=request.user)
+    cita.estado = 'confirmada'
+    cita.save()
+    return HttpResponse("Cita confirmada. ¡Gracias!")
+
+@login_required
+def reprogramar_cita(request, cita_id):
+    cita = get_object_or_404(Cita, id=cita_id, paciente__usuario=request.user)
+
+    if request.method == 'POST':
+        form = ReprogramarCitaForm(request.POST, instance=cita)
+        if form.is_valid():
+            # Aquí debes validar disponibilidad del fisioterapeuta antes de guardar
+            nueva_fecha = form.cleaned_data['fecha']
+            nueva_hora = form.cleaned_data['hora']
+            fisioterapeuta = cita.fisioterapeuta
+
+            # Validar si fisioterapeuta está disponible en fecha y hora
+            existe_cita = Cita.objects.filter(
+                fisioterapeuta=fisioterapeuta,
+                fecha=nueva_fecha,
+                hora=nueva_hora,
+                estado='agendada'
+            ).exclude(id=cita.id).exists()
+
+            if existe_cita:
+                form.add_error(None, "El fisioterapeuta no está disponible en la nueva fecha y hora.")
+            else:
+                cita.estado = 'reprogramada'
+                form.save()
+                # Opcional: enviar correo de confirmación de reprogramación
+                return HttpResponse("Cita reprogramada con éxito.")
+    else:
+        form = ReprogramarCitaForm(instance=cita)
+
+    return render(request, 'clinica/reprogramar_cita.html', {'form': form, 'cita': cita})

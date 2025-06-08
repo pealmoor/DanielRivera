@@ -1,6 +1,8 @@
 from django import forms
 from .models import Cita
 from datetime import date
+from .models import EncuestaSatisfaccion
+from django.utils import timezone
 
 
 class CitaForm(forms.ModelForm):
@@ -29,3 +31,24 @@ class CitaFisioterapeutaForm(forms.ModelForm):
     class Meta:
         model = Cita
         fields = ['estado', 'notas']
+
+class EncuestaSatisfaccionForm(forms.ModelForm):
+    class Meta:
+        model = EncuestaSatisfaccion
+        fields = ['calificacion', 'recomendacion', 'comentarios']
+        widgets = {
+            'calificacion': forms.RadioSelect,
+            'comentarios': forms.Textarea(attrs={'rows': 3}),
+        }
+
+
+class ReprogramarCitaForm(forms.ModelForm):
+    class Meta:
+        model = Cita
+        fields = ['fecha', 'hora']
+
+    def clean_fecha(self):
+        fecha = self.cleaned_data['fecha']
+        if fecha < timezone.now().date():
+            raise forms.ValidationError("La fecha no puede ser en el pasado.")
+        return fecha

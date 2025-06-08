@@ -124,5 +124,12 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-DEFAULT_FROM_EMAIL = 'no-reply@clinicadanielrivera.com'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'pedroalejandromo@ufps.edu.co'         # pon aquí tu correo
+EMAIL_HOST_PASSWORD = '3163423228'         # usa una contraseña de app, no la tuya normal
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+DOMAIN = 'http://localhost:8000'

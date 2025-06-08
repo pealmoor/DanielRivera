@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Encuesta de Satisfacción para la cita del {{ cita.fecha }}</h2>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button class="btn btn-primary" type="submit">Enviar encuesta</button>
+  </form>
+</div>
+{% endblock %}

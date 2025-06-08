@@ -9,6 +9,10 @@ urlpatterns = [
     path('panel-fisioterapeuta/', views.citas_del_dia, name='citas_del_dia'),
     path('cita/<int:cita_id>/detalle/', views.detalle_cita, name='detalle_cita'),
     path('paciente/<int:paciente_id>/historial/', views.historial_paciente, name='historial_paciente'),
+    path('cita/<int:cita_id>/encuesta/', views.encuesta_cita, name='encuesta_cita'),
+    path('cita/<int:cita_id>/confirmar/', views.confirmar_cita, name='confirmar_cita'),
+    path('cita/<int:cita_id>/reprogramar/', views.reprogramar_cita, name='reprogramar_cita'),
+
 
 
 
