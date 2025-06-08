@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Citas del día</h2>
+
+  {% if citas %}
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Hora</th>
+          <th>Paciente</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for cita in citas %}
+          <tr>
+            <td>{{ cita.hora }}</td>
+            <td>{{ cita.paciente.usuario.get_full_name }}</td>
+            <td>{{ cita.estado }}</td>
+            <td>
+              <a href="{% url 'detalle_cita' cita.id %}" class="btn btn-sm btn-primary">Ver/Editar</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No tienes citas para hoy.</p>
+  {% endif %}
+</div>
+{% endblock %}

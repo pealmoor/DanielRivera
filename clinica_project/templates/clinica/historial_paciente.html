@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Historial Clínico de {{ paciente.usuario.get_full_name }}</h2>
+
+  {% if citas %}
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Hora</th>
+          <th>Fisioterapeuta</th>
+          <th>Estado</th>
+          <th>Notas</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for cita in citas %}
+          <tr>
+            <td>{{ cita.fecha }}</td>
+            <td>{{ cita.hora }}</td>
+            <td>{{ cita.fisioterapeuta.nombre }}</td>
+            <td>{{ cita.estado }}</td>
+            <td>{{ cita.notas|linebreaks }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No hay citas atendidas registradas para este paciente.</p>
+  {% endif %}
+</div>
+{% endblock %}

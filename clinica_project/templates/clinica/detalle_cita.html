@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Detalles de la cita</h2>
+
+  <p><strong>Paciente:</strong> {{ cita.paciente.usuario.get_full_name }}</p>
+  <p><strong>Fecha:</strong> {{ cita.fecha }} | <strong>Hora:</strong> {{ cita.hora }}</p>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn btn-success" type="submit">Guardar cambios</button>
+    <a href="{% url 'citas_del_dia' %}" class="btn btn-secondary">Volver</a>
+    <a href="{% url 'historial_paciente' cita.paciente.id %}" class="btn btn-info mt-2">
+  Ver historial del paciente
+</a>
+  </form>
+</div>
+{% endblock %}
